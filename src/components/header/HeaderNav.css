@@ -1,19 +1,4 @@
-.testbg{
-    background-color: blue;
-    height: 100px;
-    width: 100vw;
-    color:magenta;
-    justify-items: center;
-    align-items: center;
-    text-align: center;
-    border: 10px solid black;
-}
-
-.textpos{
-    position: relative;
-    background-color: blueviolet;
-    top:25%;
-    /* left:25vw; */
-    width:100%;
-    border: 10px solid black;
+.nav-item{
+    padding-right:50px;
+    font-size: large;
 }
