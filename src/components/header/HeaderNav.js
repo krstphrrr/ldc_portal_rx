@@ -9,7 +9,7 @@ class Header extends React.Component{
  
     render(){
         return (
-            <Navbar bg="light" expand="md" style={{height:"100px"}}>
+            <Navbar bg="light" expand="md" style={{height:"100px"}} fixed="top" >
                 <Navbar.Brand href="/">
                     <img alt="required alt property" src="images/dc-logo-color.png"></img>
                 </Navbar.Brand>
