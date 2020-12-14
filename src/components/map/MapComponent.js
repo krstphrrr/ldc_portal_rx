@@ -1,5 +1,7 @@
-import React, {useState} from "react";
-import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from "react-leaflet";
+import React, {useState, useRef} from "react";
+import L from 'leaflet'
+import { MapContainer, TileLayer, useMapEvents, FeatureGroup} from "react-leaflet";
+import  EditControl  from "./EditControl"
 // import { Icon } from "leaflet";
 // import * as parkData from "./data/skateboard-parks.json";
 // import DefaultTile from '../TileLayers/DefaultTile'
@@ -10,36 +12,82 @@ const bounds = [
   [27.213765,-131.539653]
 ]
 
-// function ChangeView({ center, zoom }) {
-//   const map = useMap();
-//   map.setView(center, zoom);
-//   return null;
-// }
-function AddMarkerToClick() {
-
-  const [markers, setMarkers] = useState([]);
-
-  const map = useMapEvents({
-    click(e) {
-      const newMarker = e.latlng
-      setMarkers([...markers, newMarker]);
-    },
-  })
-
-  return (
-    <>
-      {markers.map((marker,index) => 
-        console.log(marker)
-        /* <Marker key={index} position={marker}>
-          <Popup>Marker is at {marker}</Popup>
-        </Marker> */
-      
-      )}
-    </>
-  )
+function testFunction() {
+  
 }
 
  function MapComponent() {
+  // intento de mapdraw control 
+  const editRef = useRef()
+  const [drawing, setDrawing] = useState(false)
+
+  const handleClick = () => {
+        
+    //Edit this method to perform other actions
+
+    if (!drawing) {
+        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
+        
+    } else {
+      
+
+        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.completeShape()
+        editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
+    }
+    setDrawing(!drawing)
+}
+
+// startDraw
+        // editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.enable()
+
+        // cancelDraw 
+        //editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
+
+        // vertexBack 
+        //editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.deleteLastVertex()
+
+        // stopDraw 
+        //editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.completeShape()
+        //editRef.current.leafletElement._toolbars.draw._modes.polygon.handler.disable()
+
+        // startEdit 
+        //editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
+
+        // cancelEdit 
+        //editRef.current.leafletElement._toolbars.edit._modes.edit.handler.disable()
+
+        // saveEdit
+        //editRef.current.leafletElement._toolbars.edit._modes.edit.handler.save() 
+        //editRef.current.leafletElement._toolbars.edit._modes.edit.handler.disable()
+        
+        // startDelete 
+        //editRef.current.leafletElement._toolbars.edit._modes.remove.handler.enable()
+
+        // saveDelete 
+        //editRef.current.leafletElement._toolbars.edit._modes.remove.handler.save()
+        //editRef.current.leafletElement._toolbars.edit._modes.remove.handler.disable()
+
+
+const onShapeDrawn = (e) => {
+  setDrawing(false)
+
+  e.layer.on('click', () => {
+      editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable()
+      
+  })
+  e.layer.on('contextmenu', () => {
+      //do some contextmenu action here
+  })
+  e.layer.bindTooltip("Text", 
+      {
+        className: 'leaflet-draw-tooltip:before leaflet-draw-tooltip leaflet-draw-tooltip-visible',
+        sticky: true,
+        direction: 'right'
+      }
+  );
+}
+
+
 
   return (
     <MapContainer 
@@ -59,7 +107,29 @@ function AddMarkerToClick() {
         subdomains={['mt0','mt1','mt2','mt3']}>
 
         </TileLayer>
-        <AddMarkerToClick></AddMarkerToClick>
+
+        {/* <AddMarkerToClick></AddMarkerToClick> */}
+        <FeatureGroup >
+                    <EditControl
+                    ref={editRef}
+                    position='topright'
+                    onCreated={onShapeDrawn}
+                    //here you can specify your shape options and which handler you want to enable
+                    draw={{
+                        rectangle: false,
+                        circle: false,
+                        polyline: false,
+                        circlemarker: false,
+                        marker: false,
+                        polygon: {
+                            allowIntersection: false,
+                            shapeOptions: {
+                                color: "#ff0000"
+                            },
+                        }
+                    }}
+                    />
+                </FeatureGroup>
     </MapContainer>
   );
 }
